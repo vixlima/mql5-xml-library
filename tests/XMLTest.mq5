@@ -1,12 +1,12 @@
 //+------------------------------------------------------------------+
-//|                                                    CUnitTests.mq5 |
+//|                                                    CUnitTestss.mq5 |
 //|                                     Copyright 2015, Louis Fradin |
 //|                                      http://en.louis-fradin.net/ |
 //+------------------------------------------------------------------+
 #property copyright "Copyright 2015, Louis Fradin"
 #property link      "http://en.louis-fradin.net/"
 #property version   "1.00"
-#include "../modules/unittest_library/UnitTestCollection.mqh"
+#include "../modules/unit-test-library/UnitTest-Library.mqh"
 #include "../src/XML.mqh"
 //+------------------------------------------------------------------+
 //| Class to access private functions for tests
@@ -27,16 +27,16 @@ class PrivateAccessXML : public CXML{
 //| Summary of tests
 //+------------------------------------------------------------------+
 void OnStart(){
-   CUnitTestCollection utCollection();
-   utCollection.AddUnitTest(ParseAttribute_Test());
-   utCollection.AddUnitTest(ParseContent_Test());
-   utCollection.AddUnitTest(ParseNode_Test());
+   CUnitTestsCollection utCollection();
+   utCollection.AddUnitTests(ParseAttribute_Test());
+   utCollection.AddUnitTests(ParseContent_Test());
+   utCollection.AddUnitTests(ParseNode_Test());
 }
 //+------------------------------------------------------------------+
 //| Test of ParseAttribute method
 //+------------------------------------------------------------------+
-CUnitTest* ParseAttribute_Test(){
-   CUnitTest* ut = new CUnitTest("ParseAttribute_Test");
+CUnitTests* ParseAttribute_Test(){
+   CUnitTests* ut = new CUnitTests("ParseAttribute_Test");
    PrivateAccessXML xml();
    CXMLAttribute *attribute, *attributeSon;
    CXMLNode *node = new CXMLNode();
@@ -103,8 +103,8 @@ CUnitTest* ParseAttribute_Test(){
 //+------------------------------------------------------------------+
 //| Test of ParseContent method
 //+------------------------------------------------------------------+
-CUnitTest* ParseContent_Test(){
-   CUnitTest* ut = new CUnitTest("ParseContent_Test");
+CUnitTests* ParseContent_Test(){
+   CUnitTests* ut = new CUnitTests("ParseContent_Test");
    CXMLNode *node, *nodeSon;
    PrivateAccessXML xml();
    string text;
@@ -130,8 +130,8 @@ CUnitTest* ParseContent_Test(){
 //+------------------------------------------------------------------+
 //| Test of ParseNode method
 //+------------------------------------------------------------------+
-CUnitTest* ParseNode_Test(){
-   CUnitTest* ut = new CUnitTest("ParseNode_Test");
+CUnitTests* ParseNode_Test(){
+   CUnitTests* ut = new CUnitTests("ParseNode_Test");
    PrivateAccessXML xml();
    string text;
    CXMLNode *node, *child;
