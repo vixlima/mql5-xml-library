@@ -31,6 +31,7 @@ void OnStart(){
    utCollection.AddUnitTests(ParseAttribute_Test());
    utCollection.AddUnitTests(ParseContent_Test());
    utCollection.AddUnitTests(ParseNode_Test());
+   utCollection.AddUnitTests(Informations_Test());
 }
 //+------------------------------------------------------------------+
 //| Test of ParseAttribute method
@@ -190,6 +191,31 @@ CUnitTests* ParseNode_Test(){
    child = child.GetChild();
    ut.IsEquals(__FILE__, __LINE__, "child2", child.GetName());
    ut.IsEquals(__FILE__, __LINE__, "", child.GetText());
+   delete node;
+   return ut;
+}
+//+------------------------------------------------------------------+
+//| Test of informations
+//+------------------------------------------------------------------+
+CUnitTests* Informations_Test(){
+   CUnitTests* ut = new CUnitTests("Informations_Test");
+   // Test information concerning number of children
+   CXMLNode* parentNode = new CXMLNode();
+   CXMLNode* child1 = new CXMLNode();
+   CXMLNode* child2 = new CXMLNode();
+   ut.IsEquals(__FILE__,__LINE__,0,parentNode.GetChildrenNbr());
+   parentNode.AddChild(child1);
+   parentNode.AddChild(child2);
+   ut.IsEquals(__FILE__,__LINE__,2,parentNode.GetChildrenNbr());
+   delete parentNode;
+   // Test information concerning number of brothers
+   CXMLNode* node = new CXMLNode();
+   CXMLNode* brother1 = new CXMLNode();
+   CXMLNode* brother2 = new CXMLNode();
+   ut.IsEquals(__FILE__,__LINE__,0,node.GetBrothersNbr());
+   node.AddBrother(brother1);
+   node.AddBrother(brother2);
+   ut.IsEquals(__FILE__,__LINE__,2,node.GetBrothersNbr());
    delete node;
    return ut;
 }

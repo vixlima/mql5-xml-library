@@ -39,11 +39,12 @@ class CXMLNode{
       void DeleteChildren(); // Delete All children of the node
       CXMLNode* GetChild(string name); // Get a children by its name
       // Operations on brothers
-      void AddLittleBrother(CXMLNode* brother); // Add a brother to the node
-      CXMLNode* DetachLittleBrothers(); // Detach all little brothers from this node
-      void DeleteLittleBrothers(); // Delete all little brothers of this node
+      void AddBrother(CXMLNode* brother); // Add a brother to the node
+      CXMLNode* DetachBrothers(); // Detach all little brothers from this node
+      void DeleteBrothers(); // Delete all little brothers of this node
       // Informations
       int GetBrothersNbr(); // Return the number of brothers
+      int GetChildrenNbr(); // Return the number of brothers
       // Accessors
       string GetName();
       string GetText();
@@ -113,7 +114,7 @@ void CXMLNode::WithoutForbiddenLetters(string& entryString){
 void CXMLNode::DeleteAll(){
    this.DeleteAttributes();
    this.DeleteChildren();   
-   this.DeleteLittleBrothers();
+   this.DeleteBrothers();
 }
 //+------------------------------------------------------------------+
 //| Generate XML text
@@ -238,7 +239,7 @@ void CXMLNode::AddChild(CXMLNode *child){
    if(m_children==NULL)
       m_children = child;
    else
-      m_children.AddLittleBrother(child);
+      m_children.AddBrother(child);
 }
 //+------------------------------------------------------------------+
 //| Detach children from the node and return it
@@ -258,13 +259,13 @@ CXMLNode* CXMLNode::DetachChildren(){
 void CXMLNode::DeleteChild(){
    // Preservation of children and brothers 
    CXMLNode* children = m_children.DetachChildren();
-   CXMLNode* brothers = m_children.DetachLittleBrothers();
+   CXMLNode* brothers = m_children.DetachBrothers();
    delete m_children;
    m_children = brothers;
    if(m_children==NULL) // If there is no son (so no brothers)
       m_children = children;
    else
-      m_children.AddLittleBrother(children);
+      m_children.AddBrother(children);
 }
 //+------------------------------------------------------------------+
 //| Delete children of the node
@@ -293,20 +294,20 @@ CXMLNode* CXMLNode::GetChild(string name){
    return NULL;
 }
 //+------------------------------------------------------------------+
-//| Add a little brother to the node
+//| Add a brother to the node
 //| @param brother The node to add as a brother
 //+------------------------------------------------------------------+
-void CXMLNode::AddLittleBrother(CXMLNode *brother){
+void CXMLNode::AddBrother(CXMLNode *brother){
    if(m_brothers == NULL) // If he has no little brother
       m_brothers = brother;
    else
-      m_brothers.AddLittleBrother(brother);
+      m_brothers.AddBrother(brother);
 }
 //+------------------------------------------------------------------+
-//| Detach little brothers from the node
+//| Detach brothers from the node
 //| @return The detached brother(s)
 //+------------------------------------------------------------------+
-CXMLNode* CXMLNode::DetachLittleBrothers(){
+CXMLNode* CXMLNode::DetachBrothers(){
    CXMLNode* temp = NULL;
    if(m_brothers != NULL){
       temp = m_brothers;
@@ -315,9 +316,9 @@ CXMLNode* CXMLNode::DetachLittleBrothers(){
    return temp;
 }
 //+------------------------------------------------------------------+
-//| Delete little brothers of the node
+//| Delete brothers of the node
 //+------------------------------------------------------------------+
-void CXMLNode::DeleteLittleBrothers(){
+void CXMLNode::DeleteBrothers(){
    if(m_brothers!=NULL){
       m_brothers.DeleteAll();
       delete m_brothers;
@@ -332,7 +333,17 @@ int CXMLNode::GetBrothersNbr(){
    if(m_brothers!=NULL)
       return (1+m_brothers.GetBrothersNbr());
    else
-      return (1);
+      return 0;
+}
+//+------------------------------------------------------------------+
+//| Get the number of children
+//| @return The number of children
+//+------------------------------------------------------------------+
+int CXMLNode::GetChildrenNbr(){
+   if(m_children!=NULL)
+      return (1+m_children.GetBrothersNbr());
+   else
+      return 0;
 }
 //+------------------------------------------------------------------+
 //| Get Name
