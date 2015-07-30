@@ -3,61 +3,48 @@
 //|                                     Copyright 2014, Louis Fradin |
 //|                                      http://en.louis-fradin.net/ |
 //+------------------------------------------------------------------+
-
 #property copyright     "Copyright 2014, Louis Fradin"
 #property link          "http://en.louis-fradin.net/"
 #property description   "XML Document creator and parser"
-
 // Includes
 #include "XMLNode.mqh"
-
 //+------------------------------------------------------------------+
 //| Prototype
 //+------------------------------------------------------------------+
-
-class XML{
+class CXML{
    protected:
-      XMLNode *m_root; // Root of the tree
-      
+      CXMLNode *m_root; // Root of the tree
       // Parse functions
-      int ParseNode(XMLNode *node, string text, int position = 0); // Parsing a text and put it into a node
-      int ParseAttribute(XMLNode *node, string text, int position); // Parsing a text and put it into attribute
-      int ParseContent(XMLNode* node, string text, int position); // Parsing a text and put it into the node content
-      
+      int ParseNode(CXMLNode *node, string text, int position = 0); // Parsing a text and put it into a node
+      int ParseAttribute(CXMLNode *node, string text, int position); // Parsing a text and put it into attribute
+      int ParseContent(CXMLNode* node, string text, int position); // Parsing a text and put it into the node content
+      // Other functions
       string GenerateText(); // Generate a string with the tree
    public:
-      XML(); // Constructor
-      ~XML(); // Destructor
-            
+      CXML(); // Constructor
+      ~CXML(); // Destructor
       void Clear(); // Clear the tree
       void ReadDOM(); // Read the Tree
       bool ReadFromFile(string fileName, string extension = "xml"); // Read the file to extract the tree
       bool Save(string fileName, string extension = "xml"); // Save the tree into a xml file
-      
       // Accessors
-      XMLNode* GetDocumentRoot(); // Get the tree root
-      
+      CXMLNode* GetDocumentRoot(); // Get the tree root   
       // Mutators
-      bool SetDocumentRoot(XMLNode* root); // Set the tree by the root entered
+      bool SetDocumentRoot(CXMLNode* root); // Set the tree by the root entered
 };
-
 //+------------------------------------------------------------------+
 //| Constructor
 //+------------------------------------------------------------------+
- 
-XML::XML(){
+CXML::CXML(){
    m_root = NULL; // Setting the root to nothing
 }
-
 //+------------------------------------------------------------------+
 //| Destructor
 //+------------------------------------------------------------------+
-
-XML::~XML(){
+CXML::~CXML(){
    if(m_root!=NULL)
       delete m_root;
 }
-
 //+------------------------------------------------------------------+
 //| Parse a text into a node
 //| @param *node Pointer on a initialised node
@@ -65,18 +52,14 @@ XML::~XML(){
 //| @param position Position in the text where the parsing should begin
 //| @return Position where the analyse stopped
 //+------------------------------------------------------------------+
-
-int XML::ParseNode(XMLNode *node, string text, int position = 0){
+int CXML::ParseNode(CXMLNode *node, string text, int position = 0){
    string character, name;
    int state, maxSize;
-   
    state = 0;
    maxSize = StringLen(text);
    name = "";
-   
    while(state!=5&&position<maxSize){
       character = StringSubstr(text,position,1);
-   
       switch(state){
          case 0: // Initial state
             if(character=="<")
@@ -118,13 +101,10 @@ int XML::ParseNode(XMLNode *node, string text, int position = 0){
          default:
             break;
       }
-      
       position++;
    }
-   
    return (position-1);
 }
-
 //+------------------------------------------------------------------+
 //| Parse a text into attribute
 //| @param *node Pointer on a initialised node
@@ -132,23 +112,19 @@ int XML::ParseNode(XMLNode *node, string text, int position = 0){
 //| @param position Position in the text where the parsing should begin
 //| @return Position where the analyse stopped
 //+------------------------------------------------------------------+
-
-int XML::ParseAttribute(XMLNode *node, string text, int position){
+int CXML::ParseAttribute(CXMLNode *node, string text, int position){
    // Variables creation
    int state, maxSize;
    string character, aName, aText;
-   XMLAttribute *attribute;
-   
+   CXMLAttribute *attribute;
    // Variables initialisation
    aName = "";
    aText = "";
    state = 0;
    attribute = NULL;
    maxSize = StringLen(text);
-   
    while(state!=11&&position<maxSize){
       character = StringSubstr(text,position,1);
-      
       switch(state){
          case 0:
             if(character == ">" || StringSubstr(text,position,2) == "/>")
@@ -202,12 +178,10 @@ int XML::ParseAttribute(XMLNode *node, string text, int position){
             break;
          case 9:
             position--; // This state doesn't treat a character
-            
             if(attribute == NULL)
-               attribute = new XMLAttribute(aName, aText);
+               attribute = new CXMLAttribute(aName, aText);
             else
-               attribute.AddChild(aName, aText);
-                           
+               attribute.AddChild(aName, aText);             
             aName = "";
             aText = "";
             state = 0;
@@ -223,18 +197,15 @@ int XML::ParseAttribute(XMLNode *node, string text, int position){
       
       position++;
    }
-   
    if(aName!=""||aText!=""){ // If there is still an argument
       if(attribute == NULL)
-         attribute = new XMLAttribute(aName, aText);
+         attribute = new CXMLAttribute(aName, aText);
       else
          attribute.AddChild(aName, aText);
    }
-   
    node.AddAttribute(attribute);
    return (position-1);
 }
-
 //+------------------------------------------------------------------+
 //| Parse a text into a node content
 //| @param *node Pointer on a initialised node
@@ -242,21 +213,17 @@ int XML::ParseAttribute(XMLNode *node, string text, int position){
 //| @param position Position in the text where the parsing should begin
 //| @return Position where the analyse stopped
 //+------------------------------------------------------------------+
-
-int XML::ParseContent(XMLNode* node, string text, int position){
+int CXML::ParseContent(CXMLNode* node, string text, int position){
    int state, maxSize, nameSize, spacesNbr;
    string character, temp, nodeText;
-   XMLNode *child;
-   
+   CXMLNode *child;
    nameSize = StringLen(node.GetName());
    state = 0;
    spacesNbr = 0;
    nodeText = "";
    maxSize = StringLen(text);
-   
    while(state!=6&&position<maxSize){
       character = StringSubstr(text,position,1);
-      
       switch(state){
          case 0:
             if(character == "<")
@@ -292,7 +259,6 @@ int XML::ParseContent(XMLNode* node, string text, int position){
                nodeText += "<"+character;
                state = 0;
             }
-            
             break;
          case 3:
             if(character==">")
@@ -306,12 +272,11 @@ int XML::ParseContent(XMLNode* node, string text, int position){
                   spacesNbr++;
                else
                   spacesNbr=0;
-                  
                nodeText += character;
             }
             break;
          case 5:
-            child = new XMLNode();
+            child = new CXMLNode();
             position = ParseNode(child, text, position);
             node.AddChild(child);
             child = NULL;
@@ -320,79 +285,63 @@ int XML::ParseContent(XMLNode* node, string text, int position){
          default:
             break;
       }
-      
       position++;
    }
-   
    int textSize = StringLen(nodeText);
    nodeText = StringSubstr(nodeText, 0, textSize - spacesNbr);
    node.SetText(nodeText);
-   
    return (position-1);
 }
-
 //+------------------------------------------------------------------+
 //| Clear the root node
 //+------------------------------------------------------------------+
-
-void XML::Clear(){
+void CXML::Clear(){
    if(m_root!=NULL){
       m_root.DeleteAll();
       delete m_root;
       m_root = NULL;
    }
 }
-
 //+------------------------------------------------------------------+
 //| Read the DOM from the root node
 //+------------------------------------------------------------------+
-
-void XML::ReadDOM()
-{
+void CXML::ReadDOM(){
    if(m_root!=NULL)
       m_root.ReadAll();
    else
       Print("XML::ReadDom: The document root is empty.");
 }
-
 //+------------------------------------------------------------------+
 //| Generate Text from the node root
 //| @return Text generated
 //+------------------------------------------------------------------+
-
-string XML::GenerateText(){
+string CXML::GenerateText(){
    return m_root.GenerateText();
 }
-
 //+------------------------------------------------------------------+
 //| Read From File
 //| @param fileName Name of the file
 //| @param extension Extension of the file
 //| @return true if successful, false otherwise
 //+------------------------------------------------------------------+
-
-bool XML::ReadFromFile(string fileName,string extension="xml"){
+bool CXML::ReadFromFile(string fileName,string extension="xml"){
    string fullName = fileName + "." + extension;
-
    // If the file doesn't exists
    if(!FileIsExist(fullName)){
       Print("XML::ReadFromFile: The file "+fullName+" doesn't exist");
       return false;
    }
-   
    // Open the file
    int handle = FileOpen(fullName, FILE_READ|FILE_TXT, 0, CP_UTF8);
    if(handle==INVALID_HANDLE){
       Print("XML::ReadFromFile: Error during the opening of "+fullName);
       return false;
    }
-   
    // Reading the File Content
    string fileContent="";
    while(!FileIsEnding(handle)){
       fileContent += FileReadString(handle);
    }
-   
    // Eliminate comments from the text
    int pos1, pos2;
    for(pos1 = 0; pos1 != -1; pos2 = 0){
@@ -400,39 +349,31 @@ bool XML::ReadFromFile(string fileName,string extension="xml"){
       pos1 = StringFind(fileContent, "<!--");
       if(pos1!=-1){ // If there is a comment
          pos2 = StringFind(fileContent, "-->", pos1); // Search the end of the comment
-         
          if(pos2!=-1) // If there is an end
             pos2+=3; // +3 for "-->"
          else 
             pos2 = pos1 + 4; // +4 for "<!--"
-         
          // Take what is not between pos1 and pos2 = Everything except the comment
          fileContent = StringSubstr(fileContent, 0, pos1) + StringSubstr(fileContent, pos2);
       }
    }
-   
    // Verification of the state of the root node
    if(m_root!=NULL)
       this.Clear();
    else
-      m_root = new XMLNode();
-   
+      m_root = new CXMLNode();
    // Parsing the text
    this.ParseNode(m_root, fileContent);
-   
    return true;
 }
-
 //+------------------------------------------------------------------+
 //| Save File
 //| @param fileName Name of the file
 //| @param extension Extension of the file
 //| @return true if successful, false otherwise
 //+------------------------------------------------------------------+
-
-bool XML::Save(string fileName, string extension = "xml"){
+bool CXML::Save(string fileName, string extension = "xml"){
    string fullName = fileName + "." + extension;
-
    // If the file exists, it is deleted
    if(FileIsExist(fullName)){
       if(!FileDelete(fullName)){
@@ -440,40 +381,33 @@ bool XML::Save(string fileName, string extension = "xml"){
          return false;
       }
    }
-   
    // Open the file
    int handle = FileOpen(fullName, FILE_WRITE|FILE_TXT, 0, CP_UTF8);
    if(handle==INVALID_HANDLE){
       Print("XML::Save: Error during the opening of "+fullName);
       return false;
    }
-   
    if(FileWriteString(handle,this.GenerateText())<=0){
       Print("XML::Save: Error during the writing of the code in "+fullName);
       FileClose(handle);
       return false;
    }
-   
    FileClose(handle);
    return true;
 }
-
 //+------------------------------------------------------------------+
 //| GetDocumentRoot
 //| @return The root node
 //+------------------------------------------------------------------+
-
-XMLNode* XML::GetDocumentRoot(){
+CXMLNode* CXML::GetDocumentRoot(){
    return m_root;
 }
-
 //+------------------------------------------------------------------+
 //| SetDocumentRoot
 //| @param The node to set as root
 //| @return true if the root has no brother, false otherwise
 //+------------------------------------------------------------------+
-
-bool XML::SetDocumentRoot(XMLNode *root){
+bool CXML::SetDocumentRoot(CXMLNode *root){
    if(root==NULL){
       Print("XML::SetDocumentRoot: The node is NULL");
       return false;
@@ -482,14 +416,11 @@ bool XML::SetDocumentRoot(XMLNode *root){
       Print("XML::SetDocumentRoot : The document root must be the only node at the base");
       return false;
    }
-   
    if(m_root!=NULL){
       this.Clear();
       delete m_root;
    }
-   
    m_root = root;
    return true;
 }
-
 //+------------------------------------------------------------------+
