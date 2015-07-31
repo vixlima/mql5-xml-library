@@ -146,9 +146,6 @@ string CXMLNode::GenerateText(int depth = 0, bool brothers = true){
          text+=m_children.GenerateText(depth+1);
       // Write the end
       text += shift+"</"+m_name+">\r\n";
-      // Write brothers
-      if(m_brothers!=NULL)
-         text+=m_brothers.GenerateText(depth);
    }
    else{
       // Write the single node with attributes
@@ -157,6 +154,9 @@ string CXMLNode::GenerateText(int depth = 0, bool brothers = true){
          text+=m_attributes.GenerateText();
       text += "/>\r\n";
    }
+   // Write brothers
+   if(m_brothers!=NULL)
+      text+=m_brothers.GenerateText(depth);
    return text;
 }
 //+------------------------------------------------------------------+

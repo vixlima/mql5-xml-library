@@ -32,12 +32,13 @@ void OnStart(){
    utCollection.AddUnitTests(ParseContent_Test());
    utCollection.AddUnitTests(ParseNode_Test());
    utCollection.AddUnitTests(Informations_Test());
+   utCollection.AddUnitTests(ExportImport_Test());
 }
 //+------------------------------------------------------------------+
 //| Test of ParseAttribute method
 //+------------------------------------------------------------------+
 CUnitTests* ParseAttribute_Test(){
-   CUnitTests* ut = new CUnitTests("ParseAttribute_Test");
+   CUnitTests* ut = new CUnitTests("Parse Attribute Test");
    PrivateAccessXML xml();
    CXMLAttribute *attribute, *attributeSon;
    CXMLNode *node = new CXMLNode();
@@ -105,7 +106,7 @@ CUnitTests* ParseAttribute_Test(){
 //| Test of ParseContent method
 //+------------------------------------------------------------------+
 CUnitTests* ParseContent_Test(){
-   CUnitTests* ut = new CUnitTests("ParseContent_Test");
+   CUnitTests* ut = new CUnitTests("Parse Content Test");
    CXMLNode *node, *nodeSon;
    PrivateAccessXML xml();
    string text;
@@ -132,7 +133,7 @@ CUnitTests* ParseContent_Test(){
 //| Test of ParseNode method
 //+------------------------------------------------------------------+
 CUnitTests* ParseNode_Test(){
-   CUnitTests* ut = new CUnitTests("ParseNode_Test");
+   CUnitTests* ut = new CUnitTests("Parse Node Test");
    PrivateAccessXML xml();
    string text;
    CXMLNode *node, *child;
@@ -198,7 +199,7 @@ CUnitTests* ParseNode_Test(){
 //| Test of informations
 //+------------------------------------------------------------------+
 CUnitTests* Informations_Test(){
-   CUnitTests* ut = new CUnitTests("Informations_Test");
+   CUnitTests* ut = new CUnitTests("Informations Test");
    // Test information concerning number of children
    CXMLNode* parentNode = new CXMLNode();
    CXMLNode* child1 = new CXMLNode();
@@ -217,6 +218,41 @@ CUnitTests* Informations_Test(){
    node.AddBrother(brother2);
    ut.IsEquals(__FILE__,__LINE__,2,node.GetBrothersNbr());
    delete node;
+   return ut;
+}
+//+------------------------------------------------------------------+
+//| Test of export/import
+//+------------------------------------------------------------------+
+CUnitTests* ExportImport_Test(){
+   CUnitTests* ut = new CUnitTests("Export/Import Test");
+   // Creation of the tree
+   CXMLNode *root = new CXMLNode("root");
+   CXMLNode *child1 = new CXMLNode("child1");
+   root.AddChild(child1);
+   CXMLNode *grandChild = new CXMLNode("GrandChild");
+   child1.AddChild(grandChild);
+   CXMLNode *child2 = new CXMLNode("child2");
+   root.AddChild(child2);
+   CXMLNode *child3 = new CXMLNode("child3");
+   root.AddChild(child3);
+   // Export
+   CXML file();
+   file.SetDocumentRoot(root);
+   ut.IsTrue(__FILE__, __LINE__, file.Save("XML_test"));
+   // Cleaning
+   file.Clear();
+   // Import
+   ut.IsTrue(__FILE__, __LINE__, file.ReadFromFile("XML_test"));
+   root = file.GetDocumentRoot();
+   if(ut.IsEquals(__FILE__,__LINE__,3, root.GetChildrenNbr())){
+      child1 = root.GetChild();
+      ut.IsEquals(__FILE__,__LINE__,"child1", child1.GetName());
+      child2 = child1.GetBrother();
+      ut.IsEquals(__FILE__,__LINE__,"child2", child2.GetName());
+      child3 = child2.GetBrother();
+      ut.IsEquals(__FILE__,__LINE__,"child3", child3.GetName());
+   }
+   delete root;
    return ut;
 }
 //+------------------------------------------------------------------+
