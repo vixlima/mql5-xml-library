@@ -41,6 +41,7 @@ class CXMLNode{
       CXMLNode* GetChild(string name); // Get a children by its name
       // Operations on brothers
       void AddBrother(CXMLNode* brother); // Add a brother to the node
+      CXMLNode* GetBrother(string name); // Get a brother by its name
       CXMLNode* DetachBrothers(); // Detach all little brothers from this node
       void DeleteBrothers(); // Delete all little brothers of this node
       // Informations
@@ -303,6 +304,22 @@ void CXMLNode::AddBrother(CXMLNode *brother){
       m_brothers = brother;
    else
       m_brothers.AddBrother(brother);
+}
+//+------------------------------------------------------------------+
+//| Get a brother of the node by its name
+//| @param name Name of the brother
+//| @return a pointer on the brother if it exists, false otherwise
+//+------------------------------------------------------------------+
+CXMLNode* CXMLNode::GetBrother(string name){
+   for(CXMLNode* node = m_brothers; // Get brothers
+      node!=NULL; // While the node is not null
+      node = node.GetBrother()){ // Get the brother
+      if(node.GetName()==name) // If the node name is the one researched
+         return node; // Return the node
+   }
+   // If the process got to this part
+   // It means there is no node with the name searched
+   return NULL;
 }
 //+------------------------------------------------------------------+
 //| Detach brothers from the node
