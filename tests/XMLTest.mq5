@@ -47,7 +47,7 @@ CUnitTests* ParseAttribute_Test(){
    text = "attribute1='text1' attribute2=\"text2\" attribute3=text3 attribute4";
    xml.AccessParseAttribute(node, text, 0);
    // Attribute 1
-   attribute = node.GetAttribute();
+   attribute = node.GetFirstAttribute();
    if(ut.IsTrue(__FILE__, __LINE__, attribute!=NULL)){
       ut.IsEquals(__FILE__, __LINE__, "attribute1", attribute.GetName());
       ut.IsEquals(__FILE__, __LINE__, "text1", attribute.GetText());
@@ -75,7 +75,7 @@ CUnitTests* ParseAttribute_Test(){
    node.DeleteAll();
    xml.AccessParseAttribute(node, text, 0);
    // Attribute 1
-   attribute =  node.GetAttribute();
+   attribute =  node.GetFirstAttribute();
    if(ut.IsTrue(__FILE__, __LINE__, attribute!=NULL)){
       ut.IsEquals(__FILE__, __LINE__, "attribute1", attribute.GetName());
       ut.IsEquals(__FILE__, __LINE__, "text1", attribute.GetText());
@@ -91,7 +91,7 @@ CUnitTests* ParseAttribute_Test(){
    node.DeleteAll();
    xml.AccessParseAttribute(node, text, 0);
    // Attribute 1
-   attribute = node.GetAttribute();
+   attribute = node.GetFirstAttribute();
    if(ut.IsTrue(__FILE__, __LINE__, attribute!=NULL)){
       ut.IsEquals(__FILE__, __LINE__, "attribute1", attribute.GetName());
       ut.IsEquals(__FILE__, __LINE__, "text1", attribute.GetText());
@@ -165,12 +165,12 @@ CUnitTests* ParseNode_Test(){
    xml.AccessParseNode(node, text, 0);
    // On child
    child = node.GetChild();
-   attribute = child.GetAttribute();
+   attribute = child.GetFirstAttribute();
    ut.IsEquals(__FILE__, __LINE__, "argument1", attribute.GetName());
    ut.IsEquals(__FILE__, __LINE__, "text1", attribute.GetText());
    // On child's brother
    child = child.GetBrother();
-   attribute = child.GetAttribute();
+   attribute = child.GetFirstAttribute();
    ut.IsEquals(__FILE__, __LINE__, "child2", child.GetName());
    ut.IsEquals(__FILE__, __LINE__, "argument1", attribute.GetName());
    ut.IsEquals(__FILE__, __LINE__, "text1", attribute.GetText());

@@ -32,6 +32,7 @@ class CXMLNode{
       void AddAttribute(CXMLAttribute *attribute);
       void DeleteAttributes(); // Delete all attributes of the node
       CXMLAttribute* GetAttribute(string name);
+      string GetAttributeValue(string name);
       // Operations on children
       void AddChild(CXMLNode* child); // Add a child to the node
       CXMLNode* DetachChildren(); // Detach all chidren (Be careful: you have to handle the children or you will loose memory)
@@ -49,7 +50,7 @@ class CXMLNode{
       string GetName();
       string GetText();
       string GetComment();
-      CXMLAttribute* GetAttribute();
+      CXMLAttribute* GetFirstAttribute();
       CXMLNode* GetChild();
       CXMLNode* GetBrother();
       // Mutators
@@ -373,11 +374,23 @@ string CXMLNode::GetComment(){
    return comment;
 }
 //+------------------------------------------------------------------+
-//| Get Attribute
+//| Get First Attribute
 //| @return The first attribute
 //+------------------------------------------------------------------+
-CXMLAttribute* CXMLNode::GetAttribute(){
+CXMLAttribute* CXMLNode::GetFirstAttribute(){
    return m_attributes;
+}
+//+------------------------------------------------------------------+
+//| Get Attribute
+//| @param name Name of the attribute
+//| @return The first attribute as string
+//+------------------------------------------------------------------+
+string CXMLNode::GetAttributeValue(string name){
+   CXMLAttribute* attribute = this.GetAttribute(name);
+   if(attribute!=NULL)
+      return attribute.GetText();
+   else
+      return "";
 }
 //+------------------------------------------------------------------+
 //| Get Child
